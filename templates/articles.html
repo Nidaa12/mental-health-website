@@ -1,0 +1,19 @@
+<!-- templates/articles.html -->
+{% extends "base.html" %}
+
+{% block title %}Mental Health Articles{% endblock %}
+
+{% block content %}
+<h2>Mental Health Articles</h2>
+
+<div class="article-grid">
+{% for article in articles %}
+<article class="article-card">
+<div class="category-badge">{{ article.category }}</div>
+<h3><a href="{{ url_for('article', article_id=article.id) }}">{{ article.title }}</a></h3>
+<p>{{ article.content[:100] }}...</p>
+<a href="{{ url_for('article', article_id=article.id) }}" class="read-more">Read More</a>
+</article>
+{% endfor %}
+</div>
+{% endblock %}

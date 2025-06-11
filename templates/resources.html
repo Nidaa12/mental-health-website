@@ -1,0 +1,32 @@
+<!-- templates/resources.html -->
+{% extends "base.html" %}
+
+{% block title %}Mental Health Resources{% endblock %}
+
+{% block content %}
+<section class="resources-section">
+<h2>Crisis Resources</h2>
+<p>If you're in immediate distress, please contact:</p>
+
+<div class="resource-list">
+{% for resource in resources %}
+<div class="resource-card">
+<h3>{{ resource.name }}</h3>
+<p class="phone">{{ resource.phone }}</p>
+<a href="https://{{ resource.website }}" target="_blank">Visit Website</a>
+</div>
+{% endfor %}
+</div>
+</section>
+
+<section class="self-help">
+<h3>Self-Help Strategies</h3>
+<ul>
+<li>Practice deep breathing exercises</li>
+<li>Maintain a regular sleep schedule</li>
+<li>Connect with supportive friends/family</li>
+<li>Engage in physical activity</li>
+<li>Limit alcohol and caffeine intake</li>
+</ul>
+</section>
+{% endblock %}
