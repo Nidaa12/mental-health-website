@@ -1,42 +1,32 @@
-name: Deploy NidaaWebsite to Azure
+name: Deploy Flask App to Azure
 
 on:
   push:
     branches: [ "main" ]
-  workflow_dispatch:
-
-env:
-  AZURE_WEBAPP_NAME: 'nidaa-app-fgghggagdhadhbey'
-  PYTHON_VERSION: '3.12'            # إصدار بايثون حسب اختيارك في Azure
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+    - name: Checkout code
+      uses: actions/checkout@v4
 
-      - name: Set up Python ${{ env.PYTHON_VERSION }}
-        uses: actions/setup-python@v4
-        with:
-          python-version: ${{ env.PYTHON_VERSION }}
-          cache: 'pip'
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.12'
 
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-          pip install gunicorn
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install gunicorn
 
-      - name: Deploy to Azure Web App
-        uses: azure/webapps-deploy@v2
-        with:
-          app-name: ${{ env.AZURE_WEBAPP_NAME }}
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          package: .
-          startup-command: 'gunicorn --bind=0.0.0.0 --timeout 600 app:app'
-
-      - name: Verify deployment
-        run: |
-          echo "Visit your app at: https://${{ env.AZURE_WEBAPP_NAME }}.azurewebsites.net"
+    - name: Deploy to Azure Web App
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: nidaa-app 
+        publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+        package: .
+        startup-command: 'gunicorn --bind=0.0.0.0 --timeout 600 app:app'
