@@ -170,3 +170,14 @@ def internal_server_error(e):
 # Run the application
 if __name__ == '__main__':
     app.run(debug=True)
+
+import os, zipfile
+
+# فك الضغط فقط إذا لم يتم فكها من قبل
+if os.path.exists("my_packages.zip") and not os.path.exists("my_packages"):
+    with zipfile.ZipFile("my_packages.zip", 'r') as zip_ref:
+        zip_ref.extractall("my_packages")
+
+import sys
+sys.path.insert(0, 'my_packages')
+
