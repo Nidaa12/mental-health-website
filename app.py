@@ -1,13 +1,22 @@
 # app.py - Complete Mental Health Website Backend
+
+import os
+import zipfile
+import sys
+
+# فك الضغط تلقائيًا في Azure إذا لم يكن مفكوك
+if os.path.exists("my_packages.zip") and not os.path.exists("my_packages"):
+    with zipfile.ZipFile("my_packages.zip", 'r') as zip_ref:
+        zip_ref.extractall("my_packages")
+
+# إضافة المجلد إلى المسار
+sys.path.insert(0, os.path.abspath("my_packages"))
+
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_wtf import FlaskForm
 from wtforms import StringField, TextAreaField, EmailField, SelectField
 from wtforms.validators import DataRequired, Email, Length
-import os
 from datetime import datetime
-
-import sys
-sys.path.insert(0, 'my_packages')
 
 # Initialize Flask application
 app = Flask(__name__)
@@ -87,13 +96,12 @@ crisis_resources = [
     }
 ]
 
-# Home Route
+# Routes
 @app.route('/')
 def home():
     featured_articles = sorted(mental_health_articles, key=lambda x: x['date'], reverse=True)[:2]
     return render_template('index.html', featured_articles=featured_articles)
 
-# About Route
 @app.route('/about')
 def about():
     team_members = [
@@ -103,39 +111,29 @@ def about():
     ]
     return render_template('about.html', team_members=team_members)
 
-# Articles Route
 @app.route('/articles')
 def articles():
     categories = sorted(set(article['category'] for article in mental_health_articles))
-    return render_template('articles.html',
-                           articles=mental_health_articles,
-                           categories=categories)
+    return render_template('articles.html', articles=mental_health_articles, categories=categories)
 
-# Single Article Route
 @app.route('/article/<int:article_id>')
 def article(article_id):
     article = next((a for a in mental_health_articles if a['id'] == article_id), None)
     if article:
         related_articles = [a for a in mental_health_articles
                             if a['category'] == article['category'] and a['id'] != article_id][:2]
-        return render_template('article_detail.html',
-                               article=article,
-                               related_articles=related_articles)
+        return render_template('article_detail.html', article=article, related_articles=related_articles)
     flash('Article not found', 'error')
     return redirect(url_for('articles'))
 
-# Resources Route
 @app.route('/resources')
 def resources():
     return render_template('resources.html', resources=crisis_resources)
 
-# Contact Route
 @app.route('/contact', methods=['GET', 'POST'])
 def contact():
     form = ContactForm()
-
     if form.validate_on_submit():
-        # Process the form data
         contact_data = {
             'name': form.name.data,
             'email': form.email.data,
@@ -144,21 +142,15 @@ def contact():
             'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
             'ip_address': request.remote_addr
         }
-
-        # For demo purposes, we'll just print to console
         print(f"New contact submission: {contact_data}")
-
         flash('Your message has been sent successfully! We will respond within 48 hours.', 'success')
         return redirect(url_for('contact_success'))
-
     return render_template('contact.html', form=form)
 
-# Contact Success Route
 @app.route('/contact/success')
 def contact_success():
     return render_template('contact_success.html')
 
-# Error Handlers
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template('404.html'), 404
@@ -170,14 +162,3 @@ def internal_server_error(e):
 # Run the application
 if __name__ == '__main__':
     app.run(debug=True)
-
-import os, zipfile
-
-# فك الضغط فقط إذا لم يتم فكها من قبل
-if os.path.exists("my_packages.zip") and not os.path.exists("my_packages"):
-    with zipfile.ZipFile("my_packages.zip", 'r') as zip_ref:
-        zip_ref.extractall("my_packages")
-
-import sys
-sys.path.insert(0, 'my_packages')
-
