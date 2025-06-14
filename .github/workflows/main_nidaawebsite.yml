@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 env:
-  AZURE_WEBAPP_NAME: 'nidaa-app' # اسم تطبيقك على Azure
+  AZURE_WEBAPP_NAME: 'nidaa-app-fgghggagdhadhbey'
   PYTHON_VERSION: '3.12'            # إصدار بايثون حسب اختيارك في Azure
 
 jobs:
