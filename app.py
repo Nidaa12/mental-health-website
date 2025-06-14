@@ -6,6 +6,9 @@ from wtforms.validators import DataRequired, Email, Length
 import os
 from datetime import datetime
 
+import sys
+sys.path.insert(0, 'my_packages')
+
 # Initialize Flask application
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY') or 'dev-secret-key'
