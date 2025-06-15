@@ -1,21 +1,15 @@
-# app.py - Complete Mental Health Website Backend
-
 import os
 import zipfile
 import sys
 
-# فك الضغط تلقائيًا في Azure إذا لم يكن مفكوك
-if os.path.exists("my_packages.zip") and not os.path.exists("my_packages"):
-    with zipfile.ZipFile("my_packages.zip", 'r') as zip_ref:
-        zip_ref.extractall("my_packages")
 
 # إضافة المجلد إلى المسار
 sys.path.insert(0, os.path.abspath("my_packages"))
 
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_wtf import FlaskForm
-from wtforms import StringField, TextAreaField, EmailField, SelectField
-from wtforms.validators import DataRequired, Email, Length
+from wtforms import StringField, TextAreaField, SelectField
+from wtforms.validators import DataRequired, Length
 from datetime import datetime
 
 # Initialize Flask application
@@ -25,10 +19,9 @@ app.secret_key = os.environ.get('SECRET_KEY') or 'dev-secret-key'
 # Configuration
 app.config['CONTACT_EMAIL'] = os.environ.get('CONTACT_EMAIL', 'support@mindcare.example.com')
 
-# Contact Form Class
+# Contact Form Class (بدون حقل الإيميل)
 class ContactForm(FlaskForm):
     name = StringField('Full Name', validators=[DataRequired(), Length(min=2, max=50)])
-    email = EmailField('Email Address', validators=[DataRequired(), Email()])
     subject = SelectField('Subject', choices=[
         ('general', 'General Inquiry'),
         ('support', 'Support Request'),
@@ -70,95 +63,3 @@ mental_health_articles = [
         'read_time': '8 min'
     }
 ]
-
-# Crisis Resources Data
-crisis_resources = [
-    {
-        'name': 'National Suicide Prevention Lifeline',
-        'phone': '1-800-273-TALK (8255)',
-        'website': 'suicidepreventionlifeline.org',
-        'available': '24/7',
-        'description': 'Free, confidential support for people in distress'
-    },
-    {
-        'name': 'Crisis Text Line',
-        'phone': 'Text HOME to 741741',
-        'website': 'www.crisistextline.org',
-        'available': '24/7',
-        'description': 'Free, 24/7 text support with trained crisis counselors'
-    },
-    {
-        'name': 'SAMHSA Treatment Referral Helpline',
-        'phone': '1-800-662-HELP (4357)',
-        'website': 'www.samhsa.gov',
-        'available': '24/7',
-        'description': 'Referral to local treatment facilities, support groups'
-    }
-]
-
-# Routes
-@app.route('/')
-def home():
-    featured_articles = sorted(mental_health_articles, key=lambda x: x['date'], reverse=True)[:2]
-    return render_template('index.html', featured_articles=featured_articles)
-
-@app.route('/about')
-def about():
-    team_members = [
-        {'name': 'Dr. Sarah Johnson', 'role': 'Clinical Psychologist', 'bio': 'Specializes in anxiety disorders and CBT.'},
-        {'name': 'Dr. Michael Chen', 'role': 'Sleep Specialist', 'bio': 'Focuses on sleep health and its impact on mental wellness.'},
-        {'name': 'Dr. Emily Wilson', 'role': 'Trauma Therapist', 'bio': 'Expert in PTSD and resilience building.'}
-    ]
-    return render_template('about.html', team_members=team_members)
-
-@app.route('/articles')
-def articles():
-    categories = sorted(set(article['category'] for article in mental_health_articles))
-    return render_template('articles.html', articles=mental_health_articles, categories=categories)
-
-@app.route('/article/<int:article_id>')
-def article(article_id):
-    article = next((a for a in mental_health_articles if a['id'] == article_id), None)
-    if article:
-        related_articles = [a for a in mental_health_articles
-                            if a['category'] == article['category'] and a['id'] != article_id][:2]
-        return render_template('article_detail.html', article=article, related_articles=related_articles)
-    flash('Article not found', 'error')
-    return redirect(url_for('articles'))
-
-@app.route('/resources')
-def resources():
-    return render_template('resources.html', resources=crisis_resources)
-
-@app.route('/contact', methods=['GET', 'POST'])
-def contact():
-    form = ContactForm()
-    if form.validate_on_submit():
-        contact_data = {
-            'name': form.name.data,
-            'email': form.email.data,
-            'subject': form.subject.data,
-            'message': form.message.data,
-            'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-            'ip_address': request.remote_addr
-        }
-        print(f"New contact submission: {contact_data}")
-        flash('Your message has been sent successfully! We will respond within 48 hours.', 'success')
-        return redirect(url_for('contact_success'))
-    return render_template('contact.html', form=form)
-
-@app.route('/contact/success')
-def contact_success():
-    return render_template('contact_success.html')
-
-@app.errorhandler(404)
-def page_not_found(e):
-    return render_template('404.html'), 404
-
-@app.errorhandler(500)
-def internal_server_error(e):
-    return render_template('500.html'), 500
-
-# Run the application
-if __name__ == '__main__':
-    app.run(debug=True)
