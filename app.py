@@ -1,53 +1,68 @@
 import os
-import zipfile
-import sys
-
-
-# إضافة المجلد إلى المسار
-sys.path.insert(0, os.path.abspath("my_packages"))
-
 from flask import Flask, render_template, request, redirect, url_for, flash
-from flask_wtf import FlaskForm
-from wtforms import StringField, TextAreaField, SelectField
-from wtforms.validators import DataRequired, Length
-from datetime import datetime
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY') or 'dev-secret-key'
 
-# Contact Form بدون حقل إيميل
-class ContactForm(FlaskForm):
-    name = StringField('Full Name', validators=[DataRequired(), Length(min=2, max=50)])
-    subject = SelectField('Subject', choices=[
-        ('general', 'General Inquiry'),
-        ('support', 'Support Request'),
-        ('feedback', 'Website Feedback'),
-        ('professional', 'Professional Inquiry')
-    ])
-    message = TextAreaField('Your Message', validators=[DataRequired(), Length(min=10, max=1000)])
+# Sample data (replace with database later)
+articles = [
+{
+'id': 1,
+'title': 'Managing Stress and Anxiety',
+'content': 'Stress is a natural response to pressures...',
+'category': 'Stress Management'
+}
+]
 
-# صفحة الاتصال (GET و POST)
-@app.route('/contact', methods=['GET', 'POST'])
-def contact():
-    form = ContactForm()
-    if form.validate_on_submit():
-        # هنا تقدر تضيف منطق إرسال رسالة أو تخزين البيانات
-        name = form.name.data
-        subject = form.subject.data
-        message = form.message.data
+resources = [
+{
+'name': 'National Suicide Prevention Lifeline',
+'phone': '1-800-273-TALK (8255)',
+'website': 'suicidepreventionlifeline.org'
+}
+]
 
-        # مثال: طباعة البيانات (للتطوير)
-        print(f"New contact message from {name}, subject: {subject}, message: {message}")
-
-        flash('Your message has been sent successfully!', 'success')
-        return redirect(url_for('contact'))
-
-    return render_template('contact.html', form=form)
-
-# الصفحة الرئيسية (مثال، ممكن تعدلها)
 @app.route('/')
 def index():
-    return render_template('index.html')
+return render_template('index.html')
+
+@app.route('/about')
+def about():
+return render_template('about.html')
+
+@app.route('/articles')
+def show_articles():
+return render_template('articles.html', articles=articles)
+
+@app.route('/article/<int:article_id>')
+def article(article_id):
+article = next((a for a in articles if a['id'] == article_id), None)
+if article:
+return render_template('article_detail.html', article=article)
+return redirect(url_for('show_articles'))
+
+@app.route('/resources')
+def show_resources():
+return render_template('resources.html', resources=resources)
+
+@app.route('/contact', methods=['GET', 'POST'])
+def contact():
+if request.method == 'POST':
+name = request.form.get('name')
+subject = request.form.get('subject')
+message = request.form.get('message')
+
+# Process form data (add database/email logic here)
+print(f"New contact: {name} - {subject}\n{message}")
+
+flash('Message sent successfully!', 'success')
+return redirect(url_for('contact_success'))
+
+return render_template('contact.html')
+
+@app.route('/contact/success')
+def contact_success():
+return render_template('contact_success.html')
 
 if __name__ == '__main__':
-    app.run(debug=True)
+app.run(debug=True)
