@@ -3,6 +3,7 @@
     <label for="name">Full Name*</label>
     <input type="text" id="name" name="name" required
     value="{{ name if name else '' }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
   </div>
 
   <div class="form-group">
