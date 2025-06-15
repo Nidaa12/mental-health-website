@@ -12,14 +12,10 @@ from wtforms import StringField, TextAreaField, SelectField
 from wtforms.validators import DataRequired, Length
 from datetime import datetime
 
-# Initialize Flask application
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY') or 'dev-secret-key'
 
-# Configuration
-app.config['CONTACT_EMAIL'] = os.environ.get('CONTACT_EMAIL', 'support@mindcare.example.com')
-
-# Contact Form Class (بدون حقل الإيميل)
+# Contact Form بدون حقل إيميل
 class ContactForm(FlaskForm):
     name = StringField('Full Name', validators=[DataRequired(), Length(min=2, max=50)])
     subject = SelectField('Subject', choices=[
@@ -28,38 +24,30 @@ class ContactForm(FlaskForm):
         ('feedback', 'Website Feedback'),
         ('professional', 'Professional Inquiry')
     ])
-    message = TextAreaField('Your Message', validators=[
-        DataRequired(),
-        Length(min=10, max=1000)
-    ])
+    message = TextAreaField('Your Message', validators=[DataRequired(), Length(min=10, max=1000)])
 
-# Sample Mental Health Articles Data
-mental_health_articles = [
-    {
-        'id': 1,
-        'title': 'Managing Stress and Anxiety',
-        'content': 'Stress and anxiety are common experiences for most people. Learn evidence-based techniques to manage these feelings including mindfulness meditation, deep breathing exercises, and cognitive restructuring.',
-        'category': 'Stress Management',
-        'date': '2023-05-15',
-        'author': 'Dr. Sarah Johnson',
-        'read_time': '5 min'
-    },
-    {
-        'id': 2,
-        'title': 'The Science of Sleep and Mental Health',
-        'content': 'Quality sleep is essential for emotional regulation and cognitive function. This article explores the bidirectional relationship between sleep and mental health, with practical tips for improving sleep hygiene.',
-        'category': 'Wellness',
-        'date': '2023-06-02',
-        'author': 'Dr. Michael Chen',
-        'read_time': '7 min'
-    },
-    {
-        'id': 3,
-        'title': 'Building Resilience in Difficult Times',
-        'content': 'Resilience is the ability to adapt to adversity. Discover the 7 pillars of resilience and how to cultivate them in your daily life through practical exercises and mindset shifts.',
-        'category': 'Self-Improvement',
-        'date': '2023-04-28',
-        'author': 'Dr. Emily Wilson',
-        'read_time': '8 min'
-    }
-]
+# صفحة الاتصال (GET و POST)
+@app.route('/contact', methods=['GET', 'POST'])
+def contact():
+    form = ContactForm()
+    if form.validate_on_submit():
+        # هنا تقدر تضيف منطق إرسال رسالة أو تخزين البيانات
+        name = form.name.data
+        subject = form.subject.data
+        message = form.message.data
+
+        # مثال: طباعة البيانات (للتطوير)
+        print(f"New contact message from {name}, subject: {subject}, message: {message}")
+
+        flash('Your message has been sent successfully!', 'success')
+        return redirect(url_for('contact'))
+
+    return render_template('contact.html', form=form)
+
+# الصفحة الرئيسية (مثال، ممكن تعدلها)
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+if __name__ == '__main__':
+    app.run(debug=True)
