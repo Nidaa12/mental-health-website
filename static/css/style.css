@@ -125,6 +125,46 @@ font-weight: bold;
 </div>
 </section>
 {% endblock %}
+/* Article Styles */
+.articles-grid {
+display: grid;
+grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+gap: 2rem;
+margin-top: 2rem;
+}
+
+.article-card {
+background: white;
+padding: 1.5rem;
+border-radius: 8px;
+box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.article-detail {
+max-width: 800px;
+margin: 0 auto;
+background: white;
+padding: 2rem;
+border-radius: 8px;
+}
+
+.category-badge {
+background: #4a6fa5;
+color: white;
+padding: 0.3rem 0.8rem;
+border-radius: 20px;
+font-size: 0.8rem;
+display: inline-block;
+margin-bottom: 0.5rem;
+}
+
+.read-more, .back-link {
+color: #4a6fa5;
+text-decoration: none;
+font-weight: 500;
+display: inline-block;
+margin-top: 1rem;
+}
 
 footer {
 background: var(--dark-text);
