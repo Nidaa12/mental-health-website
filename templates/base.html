@@ -1,36 +1,35 @@
-<!-- templates/base.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MindCare - {% block title %}{% endblock %}</title>
-<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MindCare - {% block title %}{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-<header>
-<div class="container">
-<h1>MindCare Mental Health</h1>
-<nav>
-<ul>
-<li><a href="{{ url_for('index') }}">Home</a></li>
-<li><a href="{{ url_for('about') }}">About</a></li>
-<li><a href="{{ url_for('show_articles') }}">Articles</a></li>
-<li><a href="{{ url_for('show_resources') }}">Resources</a></li>
-<li><a href="{{ url_for('contact') }}">Contact</a></li>
-</ul>
-</nav>
-</div>
-</header>
+  <header>
+    <div class="container">
+      <h1>🧠 MindCare Mental Health</h1>
+      <nav>
+        <ul>
+          <li><a href="{{ url_for('index') }}">Home</a></li>
+          <li><a href="{{ url_for('about') }}">About</a></li>
+          <li><a href="{{ url_for('show_articles') }}">Articles</a></li>
+          <li><a href="{{ url_for('show_resources') }}">Resources</a></li>
+          <li><a href="{{ url_for('contact') }}">Contact</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
 
-<main class="container">
-{% block content %}{% endblock %}
-</main>
+  <main class="container">
+    {% block content %}{% endblock %}
+  </main>
 
-<footer>
-<div class="container">
-<p>&copy; 2025. Nidaa Al Duwaiki.</p>
-</div>
-</footer>
+  <footer>
+    <div class="container">
+      <p>&copy; 2025. Made with 🤍 by Nidaa Al Duwaiki</p>
+    </div>
+  </footer>
 </body>
 </html>
